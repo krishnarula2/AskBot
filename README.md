@@ -109,6 +109,6 @@ OpenAI for foundational API structure
 
 ChatGPT UI inspiration
 
-Designed & built by [Your Name]
+Designed & built by Krish Narula
 
 
