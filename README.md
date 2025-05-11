@@ -28,13 +28,6 @@ Local businesses often lack the time or resources to implement AI solutions. Ask
 
 ---
 
-## 🧪 Live Demo Preview
-
-![AskBot Chat UI Preview](preview.gif)  
-*(Insert a GIF or screenshot of your chat interface in action)*
-
----
-
 ## 📦 Tech Stack
 
 | Tech      | Role                          |
