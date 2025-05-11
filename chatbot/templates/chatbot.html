@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot</title>
+  <style>
+    body {
+      font-family: 'Inter', 'Helvetica', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+    .background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: linear-gradient(135deg, #6a0dad, #3498db);
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .grid {
+      width: 100%;
+      height: 100%;
+      background-image: 
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.05) 0, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 50%),
+        repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 0, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 50%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 50%),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 50%);
+      background-size: 100px 100px;
+      animation: gridMove 20s linear infinite;
+    }
+    @keyframes gridMove {
+      from { background-position: 0 0, 0 0, 0 0, 0 0; }
+      to { background-position: 100px 100px, 100px 100px, 100px 100px, 100px 100px; }
+    }
+    .blob {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      animation: float 20s infinite ease-in-out;
+    }
+    .blob:nth-child(1) {
+      width: 200px;
+      height: 200px;
+      top: 10%;
+      left: 20%;
+      animation-duration: 25s;
+    }
+    .blob:nth-child(2) {
+      width: 300px;
+      height: 300px;
+      top: 50%;
+      left: 70%;
+      animation-duration: 30s;
+    }
+    .blob:nth-child(3) {
+      width: 250px;
+      height: 250px;
+      top: 80%;
+      left: 40%;
+      animation-duration: 35s;
+    }
+    @keyframes float {
+      0% { transform: translateY(0) translateX(0); }
+      50% { transform: translateY(-20px) translateX(20px); }
+      100% { transform: translateY(0) translateX(0); }
+    }
+    #chat-container {
+      width: 100%;
+      max-width: 400px;
+      height: 80vh;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1;
+    }
+    #header {
+      background: #6a0dad;
+      color: #fff;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .avatar {
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+    }
+    .status {
+      color: #00ff00;
+      font-size: 0.8rem;
+    }
+    #messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .message {
+      max-width: 80%;
+      padding: 10px;
+      border-radius: 20px;
+      position: relative;
+      animation: fadeIn 0.3s ease-in-out;
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+    }
+    .message.bot {
+      justify-content: flex-start;
+    }
+    .message-content {
+      background: #f1f0f0;
+      color: #333;
+      border-radius: 20px;
+      padding: 10px;
+      margin-left: 5px;
+    }
+    .bot-name {
+      font-size: 0.8rem;
+      color: #555;
+      margin-left: 50px;
+      margin-bottom: 0;
+      margin-top: -5px;
+      display: block;
+    }
+    .profile-pic {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      margin-right: 5px;
+      border: 2px solid #fff;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    .user {
+      align-self: flex-end;
+      background: #6a0dad;
+      color: #fff;
+      border-bottom-right-radius: 0;
+    }
+    .bot {
+      align-self: flex-start;
+      background: #f1f0f0;
+      color: #333;
+      border-bottom-left-radius: 0;
+    }
+    #input-container {
+      display: flex;
+      border-top: 1px solid #ddd;
+      background: #fff;
+    }
+    #input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+    }
+    #send-button {
+      background: #6a0dad;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #send-button:hover {
+      background: #5a0ca0;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .bot-icon {
+      width: 16px;
+      height: 16px;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="background">
+    <div class="grid"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+  </div>
+  <div id="chat-container">
+    <div id="header">
+      <div>
+        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" class="avatar" alt="Bot Avatar" width="32" height="32" style="border-radius: 50%;" />
+        <span>AI for Businesses - AskBot</span>
+        <span class="status" style="margin-left: 10px;">Online</span>
+      </div>
+      <button onclick="closeChat()">X</button>
+    </div>
+    <div id="messages"></div>
+    <div id="input-container">
+      <input id="input" type="text" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+      <button id="send-button" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    }
+  
+    async function sendMessage() {
+      const input = document.getElementById("input");
+      const message = input.value.trim();
+      if (!message) return;
+  
+      const messagesDiv = document.getElementById("messages");
+      messagesDiv.innerHTML += `<div class="message user">${message}</div>`;
+      input.value = "";
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  
+      try {
+        const response = await fetch(`/chat/?message=${encodeURIComponent(message)}`);
+        const data = await response.json();
+        const botReply = data.response || "Sorry, something went wrong.";
+        messagesDiv.innerHTML += `<div class="message bot"><img src='https://cdn-icons-png.flaticon.com/512/4712/4712027.png' class='profile-pic' alt='Bot Icon'><div class='message-content'>${botReply}</div></div>`;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      } catch (error) {
+        console.error("Chat error:", error);
+        messagesDiv.innerHTML += `<div class="message bot"><img src='https://cdn-icons-png.flaticon.com/512/4712/4712027.png' class='profile-pic' alt='Bot Icon'>Failed to get response from server.</div>`;
+      }
+    }
+  
+    function closeChat() {
+      document.getElementById("chat-container").style.display = "none";
+    }
+  
+    document.addEventListener('DOMContentLoaded', (event) => {
+      const messagesDiv = document.getElementById("messages");
+      const greeting = "Hi! I'm AskBot 🤖 — how can I help you today?";
+      messagesDiv.innerHTML += `<div class="message bot"><img src='https://cdn-icons-png.flaticon.com/512/4712/4712027.png' class='profile-pic' alt='Bot Icon'><div class='message-content'>${greeting}</div></div>`;
+    });
+  </script>
+  
